@@ -40,7 +40,7 @@ const ConnectedArticle = (props) => {
       await askGraphQL(props.endpoints.graphql, { query, variables }, 'Forking Article')
       props.setNeedReload()
     } catch (err) {
-      alert(err)
+      console.log(err)
     }
   }
 

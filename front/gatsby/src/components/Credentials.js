@@ -28,7 +28,7 @@ const Credentials = (props) => {
         props.updateUser(data.refreshToken.users)
         setIsLoading(false)
       } catch (err) {
-        alert(`couldn't fetch users ${err}`)
+        console.log(err)
       }
     })()
   }, [])
@@ -60,7 +60,7 @@ const Credentials = (props) => {
       setPasswordC('')
       setIsUpdating(false)
     } catch (err) {
-      alert(err)
+      console.log(err)
     }
   }
 
@@ -96,6 +96,7 @@ const Credentials = (props) => {
             {...props}
             u={u}
             setDefault={setDefault}
+            endpoints={props.endpoints}
           />
         ))}
       </ul>

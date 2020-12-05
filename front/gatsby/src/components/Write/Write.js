@@ -147,7 +147,7 @@ const ConnectedWrite = (props) => {
       }
       return response
     } catch (err) {
-      alert(err)
+      console.log(err)
     }
   }
 

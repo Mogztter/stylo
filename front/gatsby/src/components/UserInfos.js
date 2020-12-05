@@ -50,7 +50,7 @@ const ConnectedUser = props => {
         setUser(data.user)
         setIsLoading(false)
       } catch (err) {
-        alert(`couldn't fetch user ${err}`)
+        console.log(err)
       }
     })()
   }, [])
@@ -106,7 +106,7 @@ const ConnectedUser = props => {
       setEmailLogin('')
       setPasswords(data.addCredential.passwords)
     } catch (err) {
-      alert(err)
+      console.log(err)
     }
   }
 

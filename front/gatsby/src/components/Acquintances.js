@@ -48,7 +48,7 @@ const ConnectedAcquintances = (props) => {
       props.setNeedReload()
       props.cancel()
     } catch (err) {
-      alert(err)
+      console.log(err)
     }
   }
 

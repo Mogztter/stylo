@@ -78,7 +78,7 @@ const ConnectedArticles = (props) => {
           setIsLoading(false)
           setNeedReload(false)
         } catch (err) {
-          alert(err)
+          console.log(err)
         }
       })()
     }
@@ -116,6 +116,7 @@ const ConnectedArticles = (props) => {
                 setCreatingArticle(false)
                 setNeedReload(true)
               }}
+              endpoints={props.endpoints}
             />
           )}
           <input

@@ -20,7 +20,7 @@ export default props => {
         props.setDefault(props.u._id)
         }
       }>Set as default</button>}
-      {isSelected && <UserInfos/>}
+      {isSelected && <UserInfos endpoints={props.endpoints}/>}
     </li>
   )
 }

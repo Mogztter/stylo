@@ -18,7 +18,7 @@ const ConnectedArticleDelete = (props) => {
       await askGraphQL(props.endpoints.graphql, { query, variables }, 'Deleting Article')
       props.setNeedReload()
     } catch (err) {
-      alert(err)
+      console.log(err)
     }
   }
 

@@ -14,7 +14,7 @@ export default ({ data }) => {
   return (
     <App layout="wrapped" title="Stylo | My Credentials" siteMetadata={data.site.siteMetadata}>
       <PrivateRoute>
-        <Credentials/>
+        <Credentials endpoints={data.site.siteMetadata.endpoints}/>
       </PrivateRoute>
     </App>
   )

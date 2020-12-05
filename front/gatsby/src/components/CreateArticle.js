@@ -32,7 +32,7 @@ const ConnectedCreateArticle = (props) => {
       await askGraphQL(props.endpoints.graphql, { query, variables }, 'Creating new Article')
       cb()
     } catch (err) {
-      alert(err)
+      console.log(err)
     }
   }
 

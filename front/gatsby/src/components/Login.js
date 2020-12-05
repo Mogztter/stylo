@@ -42,7 +42,6 @@ const ConnectedLogin = ({ login, endpoints }) => {
       .then(login)
       .catch((error) => {
         console.error(error)
-        alert(error)
       })
   }
 

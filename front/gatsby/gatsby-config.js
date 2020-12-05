@@ -7,6 +7,8 @@ const exportEndpoint = process.env.GATSBY_EXPORT_ENDPOINT
 const processEndpoint = process.env.GATSBY_PROCESS_ENDPOINT
 const humanIDRegisterEndpoint = process.env.GATSBY_HUMAN_ID_REGISTER_ENDPOINT
 
+console.log('gatsby-config')
+
 module.exports = {
   siteMetadata: {
     title: 'Stylo',
