@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { Link, navigate } from 'gatsby'
+import React, {useState} from 'react'
+import {Link, navigate} from 'gatsby'
 
 import etv from '../helpers/eventTargetValue'
 import validateEmail from '../helpers/validationEmail'
@@ -63,7 +63,7 @@ const Register = (props) => {
     }
 
     try {
-      await askGraphQL({ query, variables: user })
+      await askGraphQL(props.endpoints.graphql, { query, variables: user })
       // if no error thrown, we can navigate to /
       navigate('/')
     } catch (err) {
@@ -131,7 +131,7 @@ const Register = (props) => {
           value={institution}
           onChange={(e) => setInstitution(etv(e))}
         />
-        <input type="submit" value="Create" />
+        <input type="submit" value="Create"/>
         <p className="note">
           or <Link to="/">login</Link>
         </p>

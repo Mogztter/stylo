@@ -26,9 +26,9 @@ const ConnectedBooks = (props) => {
           const user = { user: props.activeUser._id }
           setIsLoading(true)
           const data = await askGraphQL(
+            props.endpoints.graphql,
             { query, variables: user },
-            'fetching articles',
-            props.sessionToken
+            'Fetching articles'
           )
           //Need to sort by updatedAt desc
           setTags(data.user.tags.reverse())
@@ -58,6 +58,7 @@ const ConnectedBooks = (props) => {
             setNeedReload={() => setNeedReload(true)}
             activeUser={props.activeUser}
             sessionToken={props.sessionToken}
+            endpoints={props.endpoints}
           />
         ))}
     </section>

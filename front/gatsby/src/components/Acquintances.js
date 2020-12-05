@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import { connect } from 'react-redux'
+import React, {useEffect, useState} from 'react'
+import {connect} from 'react-redux'
 
 import styles from './acquintances.module.scss'
 
@@ -20,9 +20,9 @@ const ConnectedAcquintances = (props) => {
     const query = `mutation($user:ID!,$email:String!){addAcquintance(email:$email,user:$user){ _id }}`
     const variables = { user: props.activeUser._id, email: contact }
     await askGraphQL(
+      props.endpoints.graphql,
       { query, variables },
-      'Adding acquintances',
-      props.sessionToken
+      'Adding acquintances'
     )
     setContact('')
     setLoading(true)
@@ -41,9 +41,9 @@ const ConnectedAcquintances = (props) => {
         article: props._id,
       }
       await askGraphQL(
+        props.endpoints.graphql,
         { query, variables },
-        'Sharing Article',
-        props.sessionToken
+        'Sharing Article'
       )
       props.setNeedReload()
       props.cancel()
@@ -66,9 +66,9 @@ const ConnectedAcquintances = (props) => {
         }`
         const variables = { user: props.activeUser._id }
         const data = await askGraphQL(
+          props.endpoints.graphql,
           { query, variables },
-          'Fetching acquintances',
-          props.sessionToken
+          'Fetching acquintances'
         )
         setLoading(false)
         setAcquintances(data.user.acquintances)
@@ -107,7 +107,7 @@ const ConnectedAcquintances = (props) => {
         <p key={`acquintance-${a._id}`}>
           <span onClick={() => shareWith(a._id)}>{action}</span>
           {a.displayName}
-          <br />({a.email})
+          <br/>({a.email})
         </p>
       ))}
     </section>

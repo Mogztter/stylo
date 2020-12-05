@@ -1,11 +1,9 @@
 import React from "react"
 import {Link} from "gatsby"
 import {connect} from "react-redux"
-import env from '../helpers/env'
 
 import styles from './header.module.scss'
 
-// Gestionnaire d'état (quel user est enregistré, enregistré ou non, etc.)
 const mapStateToProps = ({ logedIn, activeUser }) => {
   return { logedIn, activeUser }
 }
@@ -16,7 +14,7 @@ const ConnectedHeader = (props) => {
       <Link to='/credentials'>{props.activeUser.displayName}</Link>
       <Link to='/books'>Books</Link>
       <Link to='/articles'>Articles</Link>
-      <a href={env.BACKEND_ENDPOINT + '/logout'} className={styles.logoutAction}>Log out</a>
+      <a href={props.endpoints.backend + '/logout'} className={styles.logoutAction}>Log out</a>
     </>
     :
     <>

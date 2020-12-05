@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import { navigate } from 'gatsby'
-import { connect } from 'react-redux'
+import React, {useEffect, useState} from 'react'
+import {connect} from 'react-redux'
 
 import askGraphQL from '../helpers/graphQL'
 import styles from './credentials.module.scss'
@@ -22,9 +21,9 @@ const Credentials = (props) => {
       try {
         const query = 'query{ refreshToken{ users { _id displayName email } } }'
         const data = await askGraphQL(
+          props.endpoints.graphql,
           { query },
-          'fetching user',
-          props.sessionToken
+          'Fetching user'
         )
         props.updateUser(data.refreshToken.users)
         setIsLoading(false)
@@ -71,9 +70,9 @@ const Credentials = (props) => {
       const query = `mutation($password:ID!, $user:ID!){ setPrimaryUser(password:$password,user:$user){ users { _id displayName email } } }`
       const variables = { password: props.password._id, user: user }
       const data = await askGraphQL(
+        props.endpoints.graphql,
         { query, variables },
-        'Set user as default',
-        props.sessionToken
+        'Set user as default'
       )
       setIsUpdating(false)
       props.updateUser(data.setPrimaryUser.users)

@@ -61,9 +61,9 @@ const ConnectedArticles = (props) => {
         try {
           setIsLoading(true)
           const data = await askGraphQL(
+            props.endpoints.graphql,
             { query, variables: user },
-            'fetching articles',
-            props.sessionToken
+            'fetching articles'
           )
           //Need to sort by updatedAt desc
           setArticles(data.user.articles.reverse())
@@ -137,6 +137,7 @@ const ConnectedArticles = (props) => {
                 masterTags={tags}
                 {...a}
                 setNeedReload={() => setNeedReload(true)}
+                endpoints={props.endpoints}
               />
             ))}
         </>

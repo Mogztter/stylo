@@ -29,7 +29,7 @@ const App = (props) => {
   return (
     <div className={styles.grid}>
       <SEO {...props} />
-      <Header className={styles.header} />
+      <Header className={styles.header} endpoints={props.siteMetadata.endpoints} />
       <main className={styles.main}>
         {hasBooted && props.children}
         {!hasBooted && <p>Loading…</p>}

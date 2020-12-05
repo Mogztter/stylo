@@ -2,7 +2,6 @@ import React, { useRef } from 'react'
 import { Link } from 'gatsby'
 import { connect } from 'react-redux'
 
-import env from '../helpers/env'
 import styles from './login.module.scss'
 
 const mapStateToProps = ({ activeUser }) => {
@@ -16,7 +15,7 @@ const mapDispatchToProps = (dispatch) => {
   }
 }
 
-const ConnectedLogin = ({ login }) => {
+const ConnectedLogin = ({ login, endpoints }) => {
   const usernameInput = useRef(null)
   const passwordInput = useRef(null)
 
@@ -25,7 +24,7 @@ const ConnectedLogin = ({ login }) => {
     const username = usernameInput.current.value
     const password = passwordInput.current.value
 
-    fetch(env.BACKEND_ENDPOINT + '/login', {
+    fetch(endpoints.backend + '/login', {
       method: 'POST',
       // this parameter enables the cookie directive (set-cookie)
       credentials: 'include',
@@ -74,13 +73,13 @@ const ConnectedLogin = ({ login }) => {
             <p>
               <a
                 className={styles.humaNumConnectBtn}
-                href={env.BACKEND_ENDPOINT + '/login/openid'}
+                href={endpoints.backend + '/login/openid'}
               >
                 Connect with Huma-Num
               </a>
               <a
                 className={styles.humaNumCreateAccountBtn}
-                href={env.HUMAN_ID_REGISTER_ENDPOINT}
+                href={endpoints.humanIdRegister}
               >
                 Create a Huma-Num account
               </a>

@@ -8,7 +8,7 @@ const mapStateToProps = ({ logedIn }) => {
   return { logedIn }
 }
 
-const PrivateRoute = ({ logedIn, redirectTo, children }) => {
+const PrivateRoute = ({ logedIn, redirectTo, endpoints, children }) => {
   if (logedIn) {
     if (redirectTo) {
       navigate(redirectTo)
@@ -16,7 +16,7 @@ const PrivateRoute = ({ logedIn, redirectTo, children }) => {
     }
     return <>{children}</>
   }
-  return <Login />
+  return <Login endpoints={endpoints} />
 }
 
 export default connect(mapStateToProps)(PrivateRoute)

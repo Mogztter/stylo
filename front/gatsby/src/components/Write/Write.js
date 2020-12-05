@@ -129,12 +129,12 @@ const ConnectedWrite = (props) => {
     try {
       const query = `mutation($user:ID!,$article:ID!,$md:String!,$bib:String!,$yaml:String!,$autosave:Boolean!,$major:Boolean!,$message:String){saveVersion(version:{article:$article,major:$major,auto:$autosave,md:$md,yaml:$yaml,bib:$bib,message:$message},user:$user){ _id version revision message autosave updatedAt owner{ displayName }} }`
       const response = await askGraphQL(
+        props.endpoints.graphql,
         {
           query,
           variables: { ...variables, ...live, autosave, major, message },
         },
-        'saving new version',
-        props.sessionToken
+        'Saving new version'
       )
       if (versions[0]._id !== response.saveVersion._id) {
         setVersions([response.saveVersion, ...versions])
@@ -177,36 +177,36 @@ const ConnectedWrite = (props) => {
 
   //Reload when version switching
   useEffect(async () => {
-      setIsLoading( true)
-      const data = await askGraphQL(
-        { query: fullQuery, variables },
-        'fetching Live version',
-        props.sessionToken
-      )
-        .then(({ version, article }) => ({ version, article }))
-        .catch(error => {
-          setError(error)
-          return {}
-        })
+    setIsLoading(true)
+    const data = await askGraphQL(
+      props.endpoints.graphql,
+      { query: fullQuery, variables },
+      'Fetching Live version'
+    )
+      .then(({ version, article }) => ({ version, article }))
+      .catch(error => {
+        setError(error)
+        return {}
+      })
 
-      if (data?.article) {
-        setLive(props.version ? data.version : data.article.live)
-        setArticleInfos({
-          _id: data.article._id,
-          title: data.article.title,
-          zoteroLink: data.article.zoteroLink,
-          owners: data.article.owners.map((o) => o.displayName),
-        })
-        setVersions(data.article.versions)
-      }
-      setIsLoading(false)
+    if (data?.article) {
+      setLive(props.version ? data.version : data.article.live)
+      setArticleInfos({
+        _id: data.article._id,
+        title: data.article.title,
+        zoteroLink: data.article.zoteroLink,
+        owners: data.article.owners.map((o) => o.displayName),
+      })
+      setVersions(data.article.versions)
+    }
+    setIsLoading(false)
   }, [props.version])
 
   if (graphqlError) {
     return (<section className={styles.container}>
       <article className={styles.error}>
         <h2>Error</h2>
-        <p>{ graphqlError[0]?.message || 'Article not found.'}</p>
+        <p>{graphqlError[0]?.message || 'Article not found.'}</p>
       </article>
     </section>)
   }
@@ -224,6 +224,7 @@ const ConnectedWrite = (props) => {
           sendVersion={sendVersion}
           handleBib={handleBib}
           setCodeMirrorCursor={setCodeMirrorCursor}
+          endpoints={props.endpoints}
         />
       )}
       {!isLoading && (

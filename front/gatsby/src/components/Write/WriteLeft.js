@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, {useMemo, useState} from 'react'
 
 import styles from './writeLeft.module.scss'
 import Stats from './Stats'
@@ -32,7 +32,7 @@ export default (props) => {
             <Versions {...props} />
             <Sommaire {...props} />
             <Biblio bibTeXEntries={bibTeXEntries} {...props} />
-            <Stats md={props.md} />
+            <Stats md={props.md}/>
           </div>
         </>
       )}
