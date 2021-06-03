@@ -1,5 +1,7 @@
 import { createStore } from 'redux'
 
+import bib2key from './components/Write/bibliographe/CitationsFilter'
+
 function createReducer(initialState, handlers) {
   return function reducer(state = initialState, action) {
     if (handlers.hasOwnProperty(action.type)) {
@@ -39,6 +41,7 @@ const reducer = createReducer([], {
   // article reducers
   UPDATE_ARTICLE_STATS: updateArticleStats,
   UPDATE_ARTICLE_STRUCTURE: updateArticleStructure,
+  UPDATE_ARTICLE_BIB: updateArticleBib,
 })
 
 
@@ -170,6 +173,14 @@ function updateArticleStructure(state, { md }) {
     })
 
   return { ...state, articleStructure }
+}
+
+function updateArticleBib(state, { bib }) {
+  console.time('bib2key')
+  const articleBibTeXEntries = bib2key(bib)
+  console.log('bibTeXEntries.length: ' + articleBibTeXEntries.length)
+  console.timeEnd('bib2key')
+  return { ...state, articleBib: bib, articleBibTeXEntries }
 }
 
 export default () => createStore(reducer, initialState, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__())

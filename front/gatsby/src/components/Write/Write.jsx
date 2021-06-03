@@ -31,50 +31,6 @@ function ConnectedWrite(props) {
     []
   )
 
-  const fullQuery = `query($article:ID!, $hasVersion: Boolean!, $version:ID!) {
-    article(article:$article) {
-      _id
-      title
-      zoteroLink
-      owners {
-        displayName
-      }
-      versions {
-        _id
-        version
-        revision
-        message
-        autosave
-        updatedAt
-        owner {
-          displayName
-        }
-      }
-
-      live @skip (if: $hasVersion) {
-        md
-        bib
-        yaml
-        message
-        owner {
-          displayName
-        }
-      }
-    }
-
-    version(version: $version) @include (if: $hasVersion) {
-      _id
-      md
-      bib
-      yaml
-      message
-      revision
-      version
-      owner{
-        displayName
-      }
-    }
-  }`
 
   const instanceCM = useRef(null)
 

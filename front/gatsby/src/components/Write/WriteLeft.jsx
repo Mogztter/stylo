@@ -8,10 +8,14 @@ import Sommaire from './Sommaire'
 import Versions from './Versions'
 
 const Biblio = memo(_Biblio, function areEqual(prevProps, nextProps) {
+  console.log('Biblio#memo',
+    {
+      prevProps,
+      nextProps
+    }
+  )
   return prevProps.bib === nextProps.bib
 })
-
-const mapStateToProps = ({ articleStats }) => ({ articleStats })
 
 function WriteLeft (props) {
   const [expanded, setExpanded] = useState(true)
@@ -40,5 +44,6 @@ function WriteLeft (props) {
   )
 }
 
+const mapStateToProps = ({ articleStats }) => ({ articleStats })
 export default connect(mapStateToProps)(WriteLeft)
 
