@@ -23,6 +23,7 @@ const initialState = {
     charCountPlusSpace: 0,
     citationNb: 0,
   },
+  articleText: ''
 }
 
 const reducer = createReducer([], {
@@ -39,10 +40,12 @@ const reducer = createReducer([], {
   // article reducers
   UPDATE_ARTICLE_STATS: updateArticleStats,
   UPDATE_ARTICLE_STRUCTURE: updateArticleStructure,
+  SET_ARTICLE_TEXT: setArticleText,
 })
 
 
 function setApplicationConfig (state, action) {
+  console.log('setApplicationConfig')
   const applicationConfig = {
     ...action.applicationConfig
   }
@@ -51,6 +54,7 @@ function setApplicationConfig (state, action) {
 }
 
 function setProfile (state, action) {
+  console.log('setProfile')
   if (!action.user) {
     return { ...state, hasBooted: true }
   }
@@ -76,6 +80,7 @@ function clearZoteroToken (state) {
 }
 
 function loginUser (state, {login}) {
+  console.log('loginUser')
   if (login.password && login.users && login.token) {
     return {
       ...state,
@@ -151,6 +156,10 @@ function updateArticleStats (state, { md }) {
       charCountPlusSpace,
       citationNb
     }}
+}
+
+function setArticleText(state, { articleText }) {
+  return { ...state, articleText }
 }
 
 function updateArticleStructure(state, { md }) {

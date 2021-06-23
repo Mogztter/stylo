@@ -9,6 +9,9 @@ import createStore from './createReduxStore'
 import { getUserProfile } from './helpers/userProfile'
 import { getApplicationConfig } from './helpers/applicationConfig'
 
+//import ArticleEditor from './components/ArticleEditor'
+import { default as ArticleEditorConnect } from './SimpleComponentConnect'
+import { default as ArticleEditorUseSelector } from './SimpleComponentUseSelector'
 import Register from './components/Register'
 import PrivateRoute from './components/PrivateRoute'
 import NotFound from './components/404'
@@ -38,14 +41,13 @@ const store = createStore()
   )
 })()
 
-const ArticleID = (props) => {
+/*
+const ArticleID = () => {
   const { id, version, compareTo } = useParams()
   return (
-    <App layout="fullPage">
-      <Write {...props} id={id} version={version} compareTo={compareTo} />
-    </App>
+    <ArticleEditor id={id} version={version} />
   )
-}
+}*/
 
 render(
   <React.StrictMode>
@@ -85,7 +87,7 @@ render(
           </Route>
           <Route path={`/article/:id/compare/:compareTo`}>
             <PrivateRoute>
-              <ArticleID />
+              {/*<ArticleID />*/}
             </PrivateRoute>
           </Route>
           <Route path={`/article/:id/preview`} render={(props) => {
@@ -100,19 +102,19 @@ render(
           }} />
           <Route path={`/article/:id/version/:version/compare/:compareTo`}>
             <PrivateRoute>
-              <ArticleID />
+              {/*<ArticleID />*/}
             </PrivateRoute>
           </Route>
           <Route path={`/article/:id/version/:version`}>
             <PrivateRoute>
-              <ArticleID />
+              {/*<ArticleID />*/}
             </PrivateRoute>
           </Route>
-          <Route path={`/article/:id`}>
-            <PrivateRoute>
-              <ArticleID />
-            </PrivateRoute>
-          </Route>
+          <Route path={`/article/:id`} render={(props) => {
+            return (<PrivateRoute>
+              <ArticleEditorUseSelector />
+            </PrivateRoute>)
+          }} />
           <Route exact path="/ux">
             <App layout="wrapped">
               <h2>Buttons</h2>

@@ -15,12 +15,14 @@ import Loading from '../Loading'
 
 import useDebounce from '../../hooks/debounce'
 import 'codemirror/lib/codemirror.css'
+import ArticleVersionService from '../../services/ArticleVersion'
 
 const mapStateToProps = ({ sessionToken, activeUser, applicationConfig }) => {
   return { sessionToken, activeUser, applicationConfig }
 }
 
-function ConnectedWrite(props) {
+function ConnectedWrite (props) {
+  const articleVersionService = new ArticleVersionService(props.applicationConfig)
   const { version: currentVersion } = props
   const [readOnly, setReadOnly] = useState(Boolean(currentVersion))
   const dispatch = useDispatch()
@@ -31,51 +33,12 @@ function ConnectedWrite(props) {
     }, 250, { leading: false, trailing: true }),
     []
   )
-
-  const fullQuery = `query($article:ID!, $hasVersion: Boolean!, $version:ID!) {
-    article(article:$article) {
-      _id
-      title
-      zoteroLink
-      owners {
-        displayName
-      }
-      versions {
-        _id
-        version
-        revision
-        message
-        autosave
-        updatedAt
-        owner {
-          displayName
-        }
-      }
-
-      live @skip (if: $hasVersion) {
-        md
-        bib
-        yaml
-        message
-        owner {
-          displayName
-        }
-      }
-    }
-
-    version(version: $version) @include (if: $hasVersion) {
-      _id
-      md
-      bib
-      yaml
-      message
-      revision
-      version
-      owner{
-        displayName
-      }
-    }
-  }`
+  const autoSave = useCallback(
+    throttle((data) => {
+      saveVersion({...data, autosave: true, major: false, message: 'Current version'})
+    }, 1000, { leading: false, trailing: true }),
+    []
+  )
 
   const instanceCM = useRef(null)
 
@@ -100,13 +63,13 @@ function ConnectedWrite(props) {
   const [graphqlError, setError] = useState()
   const [isLoading, setIsLoading] = useState(true)
   const [live, setLive] = useState({})
+  console.log('NEW STATE!')
   const [versions, setVersions] = useState([])
   const [articleInfos, setArticleInfos] = useState({
     title: '',
     owners: [],
     zoteroLink: '',
   })
-  const [firstLoad, setFirstLoad] = useState(true)
 
   const codeMirrorOptions = {
     mode: 'markdown',
@@ -123,39 +86,26 @@ function ConnectedWrite(props) {
   }
 
   const sendVersion = async (autosave = true, major = false, message = '') => {
+    console.log('sendVersion', { autosave, major, message })
     try {
-      const query = `mutation($user: ID!, $article: ID!, $md: String!, $bib: String!, $yaml: String!, $autosave: Boolean!, $major: Boolean!, $message: String) {
-  saveVersion(version: {
-      article: $article,
-      major: $major,
-      auto: $autosave,
-      md: $md,
-      yaml: $yaml,
-      bib: $bib,
-      message: $message
-    },
-    user: $user
-  ) { 
-    _id 
-    version
-    revision
-    message
-    autosave
-    updatedAt
-    owner { 
-      displayName
+      // save specific version
+      await saveVersion({...live, autosave, major, message})
+      if (!autosave) {
+        // then, autosave
+        sendVersion(true, false, 'Current version')
+      }
+    } catch (err) {
+      console.error('Something went wrong!', err)
+      alert(err)
     }
   }
-}`
-      const response = await askGraphQL(
-        {
-          query,
-          variables: { ...variables, ...live, autosave, major, message },
-        },
-        'saving new version',
-        props.sessionToken,
-        props.applicationConfig
-      )
+
+  const saveVersion = async (data) => {
+    console.log('saveVersion', { data })
+    try {
+      // save specific version
+      const response = await articleVersionService.saveVersion({ ...variables, ...data })
+      console.log(versions)
       if (versions[0]._id !== response.saveVersion._id) {
         setVersions([response.saveVersion, ...versions])
       } else {
@@ -165,35 +115,38 @@ function ConnectedWrite(props) {
         const [_, ...rest] = immutableV
         setVersions([response.saveVersion, ...rest])
       }
-      return response
     } catch (err) {
+      console.error('Something went wrong!', err)
       alert(err)
     }
   }
 
-  //Autosave debouncing on the live
-  // TODO: Do not save when opening
+  // Autosave debouncing on the live
   const debouncedLive = useDebounce(live, 1000)
   useEffect(() => {
-    if (!readOnly && !isLoading && !firstLoad) {
-      sendVersion(true, false, 'Current version')
-    } else if (!readOnly && !isLoading) {
-      setFirstLoad(false)
-    } else {
-      setFirstLoad(true)
+    if (!readOnly && !isLoading) {
+      console.log('sendVersion (debounced)')
+      //sendVersion(true, false, 'Current version')
     }
   }, [debouncedLive])
 
-  const handleMDCM = async (___, __, md) => {
+  const handleArticleTextChange = (md) => {
     deriveArticleStructureAndStats({ md })
+    const data = { ...live, md: md }
+    setLive(data)
+    autoSave(data)
+  }
 
-    await setLive({ ...live, md: md })
+  const handleYamlChange = (yaml) => {
+    const data = { ...live, yaml: yaml };
+    setLive(data)
+    autoSave(data)
   }
-  const handleYaml = async (yaml) => {
-    await setLive({ ...live, yaml: yaml })
-  }
-  const handleBib = async (bib) => {
-    await setLive({ ...live, bib: bib })
+
+  const handleBibTeXChange = (bib) => {
+    const data = { ...live, bib: bib }
+    setLive(data)
+    autoSave(data)
   }
 
   //Reload when version switching
@@ -223,6 +176,7 @@ function ConnectedWrite(props) {
           owners: article.owners.map((o) => o.displayName),
         })
 
+        console.log('setVersions', { versions: article.versions })
         setVersions(article.versions)
 
         const md = version.md
@@ -246,7 +200,7 @@ function ConnectedWrite(props) {
   }
 
   if (isLoading) {
-    return <Loading />
+    return <Loading/>
   }
 
   return (
@@ -259,11 +213,11 @@ function ConnectedWrite(props) {
         versions={versions}
         readOnly={readOnly}
         sendVersion={sendVersion}
-        handleBib={handleBib}
+        handleBib={handleBibTeXChange}
         setCodeMirrorCursor={setCodeMirrorCursor}
       />
 
-      <WriteRight {...live} handleYaml={handleYaml} readOnly={readOnly} />
+      <WriteRight {...live} handleYaml={handleYamlChange} readOnly={readOnly}/>
 
       {props.compareTo && (
         <CompareSelect
@@ -287,12 +241,12 @@ function ConnectedWrite(props) {
                 window.scrollTo(0, 0)
                 //editor.scrollIntoView({ line: 0, ch: 0 })
               }}
-              onBeforeChange={handleMDCM}
+              onBeforeChange={(editor, data, value) => handleArticleTextChange(value)}
               options={codeMirrorOptions}
               ref={instanceCM}
             />
           )}
-          {props.compareTo && <Compare {...props} live={live} />}
+          {props.compareTo && <Compare {...props} live={live}/>}
         </>
       </article>
     </section>
