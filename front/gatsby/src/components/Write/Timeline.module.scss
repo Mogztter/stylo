@@ -1,0 +1,22 @@
+@use '../../styles/defaults' as *;
+@use '../../styles/variables' as *;
+
+
+.timeline {
+  display: flex;
+  overflow-y: auto;
+  padding: 1em;
+  column-gap: 0.5em;
+
+  > li {
+    min-width: 200px;
+    display: flex;
+    flex-direction: column;
+
+    > a {
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+  }
+}

@@ -1,0 +1,81 @@
+@use '../../styles/defaults' as *;
+@use '../../styles/variables' as *;
+
+
+.timeline {
+  margin-top: 1.5em;
+  margin-right: 1em;
+  margin-left: 1em;
+  border-top: 3px solid #51565a;
+  display: flex;
+  overflow-y: auto;
+  padding: 1em;
+  column-gap: 1.5em;
+  overflow: visible;
+  justify-content: center;
+  --timeline-bg-color: #51565a;
+
+  > li {
+    text-align: center;
+    min-width: 100px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+
+    &::before {
+      content: "";
+      height: 1.15em;
+      border-right: 2px dashed #51565a;
+      align-self: center;
+      top: -0.25em;
+      position: absolute;
+      z-index: -1;
+    }
+  }
+}
+
+.timelineDate {
+  position: absolute;
+  left: 50%;
+  white-space: nowrap;
+  user-select: none;
+
+  > time {
+    position: relative;
+    left: -50%;
+    color: white;
+    background-color: var(--timeline-bg-color);
+    width: 75px;
+    margin: 0 auto;
+    border-radius: 4px;
+    padding: 2px 4px;
+    top: -1.7em;
+  }
+}
+
+.timelineEntry {
+  margin-top: 0.75em;
+
+  > a {
+    cursor: pointer;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    font-weight: bold;
+    background-color: whitesmoke;
+    padding-top: 0.1em;
+  }
+}
+
+.timelineAuthorLine {
+  font-size: 0.8em;
+}
+
+.timelineAuthorName {
+  font-style: italic;
+}
+
+.timelineLatestEntry {
+  --timeline-bg-color: #007bff;
+  margin-right: 2em;
+}

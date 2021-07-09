@@ -6,22 +6,21 @@ import throttle from 'lodash/throttle'
 
 import askGraphQL from '../../helpers/graphQL'
 import styles from './write.module.scss'
-
-import WriteLeft from './WriteLeft'
-import WriteRight from './WriteRight'
 import Compare from './Compare'
 import CompareSelect from './CompareSelect'
+import Timeline from './Timeline'
 import Loading from '../Loading'
 
 import useDebounce from '../../hooks/debounce'
 import 'codemirror/lib/codemirror.css'
 import SidePane from './SidePane'
+import SimpleTimeline from "./SimpleTimeline";
 
 const mapStateToProps = ({ sessionToken, activeUser, applicationConfig }) => {
   return { sessionToken, activeUser, applicationConfig }
 }
 
-function ConnectedWrite(props) {
+function ConnectedWrite (props) {
   const { version: currentVersion } = props
   const [readOnly, setReadOnly] = useState(Boolean(currentVersion))
   const dispatch = useDispatch()
@@ -247,71 +246,65 @@ function ConnectedWrite(props) {
   }
 
   if (isLoading) {
-    return <Loading />
+    return <Loading/>
   }
 
   return (
-    <section className={styles.container}>
-      {/*
-      <WriteLeft
-        article={articleInfos}
-        {...live}
-        compareTo={props.compareTo}
-        selectedVersion={currentVersion}
-        versions={versions}
-        readOnly={readOnly}
-        sendVersion={sendVersion}
-        handleBib={handleBib}
-        setCodeMirrorCursor={setCodeMirrorCursor}
-      />
+    <>
+      <SimpleTimeline article={articleInfos}
+                compareTo={props.compareTo}
+                sendVersion={sendVersion}
+                readOnly={readOnly}
+                versions={versions}
+                selectedVersion={props.version}
+                {...live} />
+      <section className={styles.container}>
+        {props.compareTo && (
+          <CompareSelect
+            live={live}
+            {...props}
+            versions={versions}
+            readOnly={readOnly}
+            article={articleInfos}
+            selectedVersion={currentVersion}
+          />
+        )}
 
-      <WriteRight {...live} handleYaml={handleYaml} readOnly={readOnly} />
-      */}
-      {props.compareTo && (
-        <CompareSelect
+        <SidePane
+          articleInfos={articleInfos}
           live={live}
-          {...props}
+          compareTo={props.compareTo}
+          selectedVersion={props.version}
           versions={versions}
           readOnly={readOnly}
-          article={articleInfos}
-          selectedVersion={currentVersion}
+          handleYaml={handleYaml}
+          sendVersion={sendVersion}
+          handleBib={handleBib}
+          setCodeMirrorCursor={setCodeMirrorCursor}
+          {...props}
         />
-      )}
 
-      <SidePane
-        articleInfos={articleInfos}
-        live={live}
-        compareTo={props.compareTo}
-        selectedVersion={props.version}
-        versions={versions}
-        readOnly={readOnly}
-        handleYaml={handleYaml}
-        sendVersion={sendVersion}
-        handleBib={handleBib}
-        setCodeMirrorCursor={setCodeMirrorCursor}
-        {...props}
-      />
-
-      <article className={styles.article}>
-        <>
-          {readOnly && <pre>{live.md}</pre>}
-          {!readOnly && (
-            <CodeMirror
-              value={live.md}
-              cursor={{ line: 0, character: 0 }}
-              editorDidMount={(_) => {
-                window.scrollTo(0, 0)
-                //editor.scrollIntoView({ line: 0, ch: 0 })
-              }}
-              onBeforeChange={handleMDCM}
-              options={codeMirrorOptions}
-              ref={instanceCM}
-            />
-          )}
-          {props.compareTo && <Compare {...props} live={live} />}
-        </>
-      </article>
-    </section>
+        <article className={styles.article}>
+          <>
+            {readOnly && <pre>{live.md}</pre>}
+            {!readOnly && (
+              <CodeMirror
+                value={live.md}
+                cursor={{ line: 0, character: 0 }}
+                editorDidMount={(_) => {
+                  window.scrollTo(0, 0)
+                  //editor.scrollIntoView({ line: 0, ch: 0 })
+                }}
+                onBeforeChange={handleMDCM}
+                options={codeMirrorOptions}
+                ref={instanceCM}
+              />
+            )}
+            {props.compareTo && <Compare {...props} live={live}/>}
+          </>
+        </article>
+      </section>
+    </>
   )
 }
 
